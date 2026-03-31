@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lieux de stage — BES Webdeveloper · EAFC Charlemagne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink:        #1a1a2e;
+      --ink-light:  #4a4a6a;
+      --ink-muted:  #9090b0;
+      --cream:      #f7f5f0;
+      --white:      #ffffff;
+      --accent:     #2d6a4f;
+      --ok:         #2d6a4f;
+      --warn:       #b5451b;
+      --pending:    #7a6000;
+      --border:     #e0ddd6;
+      --card-bg:    #ffffff;
+      --tag-bg:     #eef4f1;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--ink);
+      color: var(--cream);
+      padding: 3rem 2rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 40px;
+      background: var(--cream);
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
+    .header-inner { max-width: 960px; margin: 0 auto; }
+    .school-tag {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--ink-muted); margin-bottom: .75rem;
+    }
+    header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 400; line-height: 1.15;
+      color: var(--white); margin-bottom: .5rem;
+    }
+    header h1 em { font-style: italic; color: #a8d8be; }
+    .header-sub { color: var(--ink-muted); font-size: 13.5px; margin-top: .6rem; }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+      max-width: 960px; margin: 2.5rem auto 1rem;
+      padding: 0 1.5rem;
+      display: flex; flex-wrap: wrap;
+      gap: .75rem; align-items: center;
+      justify-content: space-between;
+    }
+    .toolbar-left  { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+    .toolbar-right { display: flex; gap: .5rem; align-items: center; }
+
+    .filter-btn {
+      border: 1.5px solid var(--border);
+      background: var(--white); color: var(--ink-light);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 500;
+      padding: .4rem 1rem; border-radius: 99px;
+      cursor: pointer; transition: all .18s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--ink); color: var(--white); border-color: var(--ink);
+    }
+
+    .search-wrap { position: relative; }
+    .search-wrap input {
+      border: 1.5px solid var(--border); background: var(--white);
+      color: var(--ink); font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px; padding: .45rem 1rem .45rem 2.2rem;
+      border-radius: 99px; width: 190px; outline: none;
+      transition: border-color .18s;
+    }
+    .search-wrap input:focus { border-color: var(--accent); }
+    .search-wrap::before {
+      content: '⌕'; position: absolute; left: .75rem; top: 50%;
+      transform: translateY(-50%); color: var(--ink-muted);
+      font-size: 16px; pointer-events: none;
+    }
+
+    /* ── VIEW TOGGLE ── */
+    .view-toggle {
+      display: flex; gap: 2px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+      background: var(--white);
+    }
+    .view-btn {
+      background: none; border: none;
+      padding: .38rem .6rem; cursor: pointer;
+      color: var(--ink-muted); transition: all .18s;
+      display: flex; align-items: center;
+    }
+    .view-btn:hover   { color: var(--ink); background: var(--cream); }
+    .view-btn.active  { color: var(--white); background: var(--ink); }
+
+    /* ── COUNT BAR ── */
+    .count-bar {
+      max-width: 960px; margin: 0 auto .75rem;
+      padding: 0 1.5rem; font-size: 12.5px; color: var(--ink-muted);
+    }
+    #count-display { font-weight: 600; color: var(--ink-light); }
+
+    /* ── CONTAINER ── */
+    #container {
+      max-width: 960px; margin: 0 auto 4rem;
+      padding: 0 1.5rem;
+    }
+
+    /* grid mode */
+    #container.view-card {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+    /* list mode */
+    #container.view-list {
+      display: flex; flex-direction: column; gap: .45rem;
+    }
+
+    /* ── CARD (shared shell) ── */
+    .card {
+      background: var(--card-bg); border: 1.5px solid var(--border);
+      border-radius: 12px; transition: transform .18s, box-shadow .18s;
+      animation: fadeUp .3s ease both;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(26,26,46,.08);
+    }
+    .card.hidden { display: none !important; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── CARD VIEW layout ── */
+    .view-card .card {
+      padding: 1.4rem 1.5rem;
+      display: flex; flex-direction: column; gap: .75rem;
+    }
+    .view-card .card-top {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; gap: .5rem;
+    }
+    .view-card .card-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.15rem; color: var(--ink); line-height: 1.25;
+    }
+    .view-card .card-type { font-size: 12px; color: var(--ink-muted); font-style: italic; }
+    .view-card .card-meta { display: flex; flex-direction: column; gap: .35rem; }
+    .view-card .meta-row  { display: flex; gap: .5rem; font-size: 13px; color: var(--ink-light); align-items: flex-start; }
+    .view-card .meta-label {
+      font-weight: 500; min-width: 90px;
+      color: var(--ink-muted); font-size: 12px;
+      text-transform: uppercase; letter-spacing: .05em; padding-top: 2px;
+    }
+    .view-card .card-year {
+      font-size: 11.5px; color: var(--ink-muted);
+      border-top: 1px solid var(--border);
+      padding-top: .6rem; margin-top: auto;
+    }
+    /* hide list-only in card view */
+    .view-card .list-meta { display: none; }
+
+    /* ── LIST VIEW layout ── */
+    .view-list .card {
+      padding: .8rem 1.2rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: .2rem 1rem;
+      border-radius: 9px;
+    }
+    .view-list .card-top {
+      display: contents;
+    }
+    .view-list .card-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1rem; color: var(--ink);
+      grid-column: 1; grid-row: 1;
+    }
+    .view-list .status-badge {
+      grid-column: 2; grid-row: 1 / 3;
+      align-self: center;
+    }
+    .view-list .list-meta {
+      grid-column: 1; grid-row: 2;
+      font-size: 12.5px; color: var(--ink-muted);
+      display: flex; gap: 1.2rem; flex-wrap: wrap;
+    }
+    .view-list .list-meta span::before {
+      content: '·';
+      margin-right: .4rem;
+      color: var(--border);
+    }
+    .view-list .list-meta span:first-child::before { content: ''; margin: 0; }
+
+    /* hide card-only in list view */
+    .view-list .card-type,
+    .view-list .card-meta,
+    .view-list .card-year { display: none; }
+
+    /* ── BADGE ── */
+    .status-badge {
+      font-size: 11px; font-weight: 600; letter-spacing: .06em;
+      padding: .25rem .65rem; border-radius: 99px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .status-badge.ok      { background: #e6f4ed; color: var(--ok); }
+    .status-badge.nok     { background: #fdeee9; color: var(--warn); }
+    .status-badge.pending { background: #fdf6e3; color: var(--pending); }
+
+    /* ── TAGS ── */
+    .card-tags { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .1rem; }
+    .tag {
+      background: var(--tag-bg); color: var(--accent);
+      font-size: 11.5px; font-weight: 500;
+      padding: .2rem .6rem; border-radius: 6px;
+    }
+
+    /* ── EMPTY STATE ── */
+    #empty {
+      text-align: center; padding: 3rem 1rem;
+      color: var(--ink-muted); font-style: italic; display: none;
+    }
+    .view-card #empty { grid-column: 1/-1; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding: 2rem;
+      font-size: 12px; color: var(--ink-muted);
+      border-top: 1px solid var(--border);
+    }
+    footer strong { color: var(--ink-light); }
+
+    @media (max-width: 560px) {
+      .toolbar { flex-direction: column; align-items: flex-start; }
+      .search-wrap input { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <p class="school-tag">EAFC Charlemagne · Fleron &nbsp;—&nbsp; BES Webdeveloper &amp; Webdesigner UI/UX</p>
+    <h1>Lieux de stage<br><em>disponibles</em></h1>
+    <p class="header-sub">Liste mise à jour à partir des carnets de stage — Année 2024-2025</p>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="toolbar-left">
+    <button class="filter-btn active" data-filter="all">Tous</button>
+    <button class="filter-btn" data-filter="ok">✓ Disponibles</button>
+    <button class="filter-btn" data-filter="pending">À confirmer</button>
+    <button class="filter-btn" data-filter="nok">Non disponibles</button>
+  </div>
+  <div class="toolbar-right">
+    <div class="search-wrap">
+      <input type="search" id="search" placeholder="Rechercher…" />
+    </div>
+    <div class="view-toggle" role="group" aria-label="Mode d'affichage">
+      <button class="view-btn active" id="btn-card" title="Cartes" aria-pressed="true">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="currentColor">
+          <rect x="0" y="0" width="6.5" height="6.5" rx="1.5"/>
+          <rect x="8.5" y="0" width="6.5" height="6.5" rx="1.5"/>
+          <rect x="0" y="8.5" width="6.5" height="6.5" rx="1.5"/>
+          <rect x="8.5" y="8.5" width="6.5" height="6.5" rx="1.5"/>
+        </svg>
+      </button>
+      <button class="view-btn" id="btn-list" title="Liste" aria-pressed="false">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="currentColor">
+          <rect x="0" y="1.5" width="15" height="2" rx="1"/>
+          <rect x="0" y="6.5" width="15" height="2" rx="1"/>
+          <rect x="0" y="11.5" width="15" height="2" rx="1"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<p class="count-bar"><span id="count-display">1</span> lieu de stage affiché</p>
+
+<div class="view-card" id="container">
+
+  <!-- ══════════════════════════════════════════
+       CARTE — Dimagin
+       Source : carnet Ajouaou Abdeljamid 2024-25
+       ══════════════════════════════════════════ -->
+  <div class="card" data-status="ok" data-name="dimagin">
+
+    <div class="card-top">
+      <span class="card-name">Dimagin</span>
+      <span class="status-badge ok">✓ Disponible</span>
+    </div>
+
+    <!-- MODE CARTE -->
+    <p class="card-type">PME · Développement web, communication digitale, design graphique</p>
+    <div class="card-meta">
+      <div class="meta-row">
+        <span class="meta-label">Maître de stage</span>
+        <span>Pierre Godfrin</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">Compétences</span>
+        <div class="card-tags">
+          <span class="tag">HTML/CSS</span>
+          <span class="tag">JavaScript</span>
+          <span class="tag">React</span>
+          <span class="tag">WordPress</span>
+          <span class="tag">Git</span>
+        </div>
+      </div>
+    </div>
+    <p class="card-year">Dernier stage : 2024-2025 &nbsp;·&nbsp; Note maître de stage : 8/10</p>
+
+    <!-- MODE LISTE -->
+    <div class="list-meta">
+      <span>Pierre Godfrin</span>
+      <span>PME · Dev web</span>
+      <span>2024-2025</span>
+      <span>8/10</span>
+    </div>
+
+  </div>
+
+  <!-- Ajouter les prochaines cartes ici -->
+
+  <div id="empty">Aucun résultat pour cette recherche.</div>
+</div>
+
+<footer>
+  Document à usage interne — <strong>EAFC Charlemagne</strong> · Mis à jour le
+  <span id="update-date"></span>
+</footer>
+
+<script>
+  // ── Date
+  document.getElementById('update-date').textContent =
+    new Date().toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  // ── View toggle
+  const container = document.getElementById('container');
+  const btnCard   = document.getElementById('btn-card');
+  const btnList   = document.getElementById('btn-list');
+
+  function setView(mode) {
+    container.className = 'view-' + mode;
+    btnCard.classList.toggle('active', mode === 'card');
+    btnList.classList.toggle('active', mode === 'list');
+    btnCard.setAttribute('aria-pressed', mode === 'card');
+    btnList.setAttribute('aria-pressed', mode === 'list');
+    try { localStorage.setItem('stageView', mode); } catch(e) {}
+    updateCount();
+  }
+
+  btnCard.addEventListener('click', () => setView('card'));
+  btnList.addEventListener('click', () => setView('list'));
+
+  // Restaure la préférence de l'utilisateur
+  try {
+    const saved = localStorage.getItem('stageView');
+    if (saved === 'list') setView('list');
+  } catch(e) {}
+
+  // ── Filtres + recherche
+  const getCards  = () => [...document.querySelectorAll('.card')];
+  const empty     = document.getElementById('empty');
+  const countEl   = document.getElementById('count-display');
+  let activeFilter = 'all';
+
+  function updateCount() {
+    const n = getCards().filter(c => !c.classList.contains('hidden')).length;
+    empty.style.display = n === 0 ? 'block' : 'none';
+    countEl.textContent = n + (n > 1 ? ' lieux affichés' : ' lieu affiché');
+  }
+
+  function applyFilters() {
+    const q = document.getElementById('search').value.toLowerCase().trim();
+    getCards().forEach(card => {
+      const statusOk = activeFilter === 'all' || card.dataset.status === activeFilter;
+      const textOk   = !q || card.textContent.toLowerCase().includes(q);
+      card.classList.toggle('hidden', !(statusOk && textOk));
+    });
+    updateCount();
+  }
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.filter;
+      applyFilters();
+    });
+  });
+
+  document.getElementById('search').addEventListener('input', applyFilters);
+  applyFilters();
+</script>
+
+</body>
+</html>
