@@ -20,6 +20,7 @@
       --border:     #e0ddd6;
       --card-bg:    #ffffff;
       --tag-bg:     #eef4f1;
+      --contact-bg: #f4f7f5;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,7 +37,6 @@
     /* ── HEADER ── */
     header {
       background: var(--ink);
-      color: var(--cream);
       padding: 3rem 2rem 2.5rem;
       position: relative;
       overflow: hidden;
@@ -104,7 +104,7 @@
 
     /* ── VIEW TOGGLE ── */
     .view-toggle {
-      display: flex; gap: 2px;
+      display: flex;
       border: 1.5px solid var(--border);
       border-radius: 8px; overflow: hidden;
       background: var(--white);
@@ -130,23 +130,21 @@
       max-width: 960px; margin: 0 auto 4rem;
       padding: 0 1.5rem;
     }
-
-    /* grid mode */
     #container.view-card {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
       gap: 1.25rem;
     }
-    /* list mode */
     #container.view-list {
       display: flex; flex-direction: column; gap: .45rem;
     }
 
-    /* ── CARD (shared shell) ── */
+    /* ── CARD shell ── */
     .card {
       background: var(--card-bg); border: 1.5px solid var(--border);
       border-radius: 12px; transition: transform .18s, box-shadow .18s;
       animation: fadeUp .3s ease both;
+      overflow: hidden;
     }
     .card:hover {
       transform: translateY(-2px);
@@ -159,10 +157,16 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── CARD VIEW layout ── */
+    /* ══════════════════════════
+       CARD VIEW
+    ══════════════════════════ */
     .view-card .card {
+      display: flex; flex-direction: column;
+    }
+    .view-card .card-body {
       padding: 1.4rem 1.5rem;
-      display: flex; flex-direction: column; gap: .75rem;
+      display: flex; flex-direction: column; gap: .7rem;
+      flex: 1;
     }
     .view-card .card-top {
       display: flex; justify-content: space-between;
@@ -172,23 +176,55 @@
       font-family: 'DM Serif Display', serif;
       font-size: 1.15rem; color: var(--ink); line-height: 1.25;
     }
-    .view-card .card-type { font-size: 12px; color: var(--ink-muted); font-style: italic; }
-    .view-card .card-meta { display: flex; flex-direction: column; gap: .35rem; }
-    .view-card .meta-row  { display: flex; gap: .5rem; font-size: 13px; color: var(--ink-light); align-items: flex-start; }
+    .view-card .card-type {
+      font-size: 12px; color: var(--ink-muted); font-style: italic;
+    }
+    .view-card .card-meta {
+      display: flex; flex-direction: column; gap: .35rem;
+    }
+    .view-card .meta-row {
+      display: flex; gap: .5rem; font-size: 13px;
+      color: var(--ink-light); align-items: flex-start;
+    }
     .view-card .meta-label {
       font-weight: 500; min-width: 90px;
-      color: var(--ink-muted); font-size: 12px;
-      text-transform: uppercase; letter-spacing: .05em; padding-top: 2px;
+      color: var(--ink-muted); font-size: 11.5px;
+      text-transform: uppercase; letter-spacing: .05em;
+      padding-top: 2px; flex-shrink: 0;
     }
+
+    /* Contact block — card view */
+    .view-card .card-contact {
+      background: var(--contact-bg);
+      border-top: 1px solid var(--border);
+      padding: .75rem 1.5rem;
+      display: flex; flex-direction: column; gap: .25rem;
+    }
+    .view-card .contact-row {
+      display: flex; align-items: center; gap: .5rem;
+      font-size: 12.5px; color: var(--ink-light);
+    }
+    .view-card .contact-row a {
+      color: var(--accent); text-decoration: none;
+      font-weight: 500;
+    }
+    .view-card .contact-row a:hover { text-decoration: underline; }
+    .view-card .contact-icon {
+      font-size: 13px; flex-shrink: 0;
+    }
+
     .view-card .card-year {
       font-size: 11.5px; color: var(--ink-muted);
       border-top: 1px solid var(--border);
-      padding-top: .6rem; margin-top: auto;
+      padding: .6rem 1.5rem;
     }
+
     /* hide list-only in card view */
     .view-card .list-meta { display: none; }
 
-    /* ── LIST VIEW layout ── */
+    /* ══════════════════════════
+       LIST VIEW
+    ══════════════════════════ */
     .view-list .card {
       padding: .8rem 1.2rem;
       display: grid;
@@ -197,9 +233,8 @@
       gap: .2rem 1rem;
       border-radius: 9px;
     }
-    .view-list .card-top {
-      display: contents;
-    }
+    .view-list .card-body   { display: contents; }
+    .view-list .card-top    { display: contents; }
     .view-list .card-name {
       font-family: 'DM Serif Display', serif;
       font-size: 1rem; color: var(--ink);
@@ -213,17 +248,26 @@
       grid-column: 1; grid-row: 2;
       font-size: 12.5px; color: var(--ink-muted);
       display: flex; gap: 1.2rem; flex-wrap: wrap;
+      align-items: center;
     }
-    .view-list .list-meta span::before {
-      content: '·';
-      margin-right: .4rem;
+    .view-list .list-meta span + span::before {
+      content: '·'; margin-right: 1.2rem;
       color: var(--border);
     }
-    .view-list .list-meta span:first-child::before { content: ''; margin: 0; }
+    /* Contact links in list view */
+    .view-list .list-contact {
+      display: flex; gap: .75rem; align-items: center;
+    }
+    .view-list .list-contact a {
+      color: var(--accent); font-size: 12px;
+      text-decoration: none; font-weight: 500;
+    }
+    .view-list .list-contact a:hover { text-decoration: underline; }
 
     /* hide card-only in list view */
     .view-list .card-type,
     .view-list .card-meta,
+    .view-list .card-contact,
     .view-list .card-year { display: none; }
 
     /* ── BADGE ── */
@@ -237,7 +281,7 @@
     .status-badge.pending { background: #fdf6e3; color: var(--pending); }
 
     /* ── TAGS ── */
-    .card-tags { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .1rem; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .15rem; }
     .tag {
       background: var(--tag-bg); color: var(--accent);
       font-size: 11.5px; font-weight: 500;
@@ -269,7 +313,7 @@
 
 <header>
   <div class="header-inner">
-    <p class="school-tag">EAFC Charlemagne · Fleron &nbsp;—&nbsp; BES Webdeveloper &amp; Webdesigner UI/UX</p>
+    <p class="school-tag">EAFC Charlemagne · Fléron &nbsp;—&nbsp; BES Webdeveloper &amp; Webdesigner UI/UX</p>
     <h1>Lieux de stage<br><em>disponibles</em></h1>
     <p class="header-sub">Liste mise à jour à partir des carnets de stage — Année 2024-2025</p>
   </div>
@@ -310,48 +354,114 @@
 
 <div class="view-card" id="container">
 
-  <!-- ══════════════════════════════════════════
+  <!-- ════════════════════════════════════════════════════════
        CARTE — Dimagin
-       Source : carnet Ajouaou Abdeljamid 2024-25
-       ══════════════════════════════════════════ -->
+       Source : carnet + formulaire évaluation 2024-2025
+       Contact disponible (formulaire présent)
+       ════════════════════════════════════════════════════════ -->
   <div class="card" data-status="ok" data-name="dimagin">
+    <div class="card-body">
 
-    <div class="card-top">
-      <span class="card-name">Dimagin</span>
-      <span class="status-badge ok">✓ Disponible</span>
-    </div>
-
-    <!-- MODE CARTE -->
-    <p class="card-type">PME · Développement web, communication digitale, design graphique</p>
-    <div class="card-meta">
-      <div class="meta-row">
-        <span class="meta-label">Maître de stage</span>
-        <span>Pierre Godfrin</span>
+      <div class="card-top">
+        <span class="card-name">Dimagin</span>
+        <span class="status-badge ok">✓ Disponible</span>
       </div>
-      <div class="meta-row">
-        <span class="meta-label">Compétences</span>
-        <div class="card-tags">
-          <span class="tag">HTML/CSS</span>
-          <span class="tag">JavaScript</span>
-          <span class="tag">React</span>
-          <span class="tag">WordPress</span>
-          <span class="tag">Git</span>
+
+      <p class="card-type">SRL · Développement web, communication digitale, design graphique · Liège</p>
+
+      <div class="card-meta">
+        <div class="meta-row">
+          <span class="meta-label">Maître de stage</span>
+          <span>Pierre Godfrin</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Compétences</span>
+          <div class="card-tags">
+            <span class="tag">HTML/CSS</span>
+            <span class="tag">JavaScript</span>
+            <span class="tag">React</span>
+            <span class="tag">WordPress</span>
+            <span class="tag">Tailwind</span>
+            <span class="tag">Git</span>
+          </div>
         </div>
       </div>
+
+      <!-- MODE LISTE — ligne compacte -->
+      <div class="list-meta">
+        <span>Pierre Godfrin</span>
+        <span>SRL · Dev web · Liège</span>
+        <span>2024-2025 · 8/10</span>
+        <span class="list-contact">
+          <a href="mailto:pierregodfrin@dimagin.be">✉ pierregodfrin@dimagin.be</a>
+          <a href="tel:+32471792820">☎ +32 471 79 28 20</a>
+        </span>
+      </div>
+
+    </div><!-- /.card-body -->
+
+    <!-- Contact block — visible en mode carte uniquement
+         NE PAS AFFICHER si email et tél sont absents -->
+    <div class="card-contact">
+      <div class="contact-row">
+        <span class="contact-icon">✉</span>
+        <a href="mailto:pierregodfrin@dimagin.be">pierregodfrin@dimagin.be</a>
+      </div>
+      <div class="contact-row">
+        <span class="contact-icon">☎</span>
+        <a href="tel:+32471792820">+32 (0) 471 79 28 20</a>
+      </div>
     </div>
-    <p class="card-year">Dernier stage : 2024-2025 &nbsp;·&nbsp; Note maître de stage : 8/10</p>
 
-    <!-- MODE LISTE -->
-    <div class="list-meta">
-      <span>Pierre Godfrin</span>
-      <span>PME · Dev web</span>
-      <span>2024-2025</span>
-      <span>8/10</span>
+    <p class="card-year">Dernier stage : 2024-2025 &nbsp;·&nbsp; Note : 8/10 &nbsp;·&nbsp; Jury EI : ✓</p>
+
+  </div><!-- /.card -->
+
+
+  <!-- ════════════════════════════════════════════════════════
+       CARTE EXEMPLE — dossier minimal (carnet seul, pas de formulaire)
+       Pas de contact → bloc card-contact absent
+       ════════════════════════════════════════════════════════ -->
+  <div class="card" data-status="pending" data-name="exemple-minimal">
+    <div class="card-body">
+
+      <div class="card-top">
+        <span class="card-name">Entreprise Exemple</span>
+        <span class="status-badge pending">À confirmer</span>
+      </div>
+
+      <p class="card-type">Indépendant · Développement web</p>
+
+      <div class="card-meta">
+        <div class="meta-row">
+          <span class="meta-label">Maître de stage</span>
+          <span>Jean Dupont</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Compétences</span>
+          <div class="card-tags">
+            <span class="tag">HTML/CSS</span>
+            <span class="tag">PHP</span>
+            <span class="tag">WordPress</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODE LISTE — pas de contact disponible -->
+      <div class="list-meta">
+        <span>Jean Dupont</span>
+        <span>Indépendant · Dev web</span>
+        <span>2023-2024</span>
+      </div>
+
     </div>
 
-  </div>
+    <!-- Pas de bloc card-contact → contact non disponible -->
 
-  <!-- Ajouter les prochaines cartes ici -->
+    <p class="card-year">Dernier stage : 2023-2024 &nbsp;·&nbsp; Note : non renseignée</p>
+
+  </div><!-- /.card -->
+
 
   <div id="empty">Aucun résultat pour cette recherche.</div>
 </div>
@@ -384,7 +494,6 @@
   btnCard.addEventListener('click', () => setView('card'));
   btnList.addEventListener('click', () => setView('list'));
 
-  // Restaure la préférence de l'utilisateur
   try {
     const saved = localStorage.getItem('stageView');
     if (saved === 'list') setView('list');
